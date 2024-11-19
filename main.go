@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -41,14 +43,19 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Inserted a single document: ", result.InsertedID)
-}
 
-type User struct {
-	ID          uint64 `json:"identification"`
-	Name        string `json:"name"`
-	LastName    string `json:"lastName"`
-	PublicForce string `json:"publicForce"`
-	Range       string `json:"range"`
-	ForceID     int    `json:"forceId"`
-	Email       string `json:"email"`
+	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowCredentials: true,
+	}))
+	userCrudService := UserCRUD{
+		userCollection: collection,
+	}
+	router.GET("/users", userCrudService.GetUsers)
+	router.POST("/users", userCrudService.CreateUser)
+	router.POST("/login", userCrudService.Login)
+	router.Run(":8080")
 }
