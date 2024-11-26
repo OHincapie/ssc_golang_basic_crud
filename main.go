@@ -35,14 +35,11 @@ func main() {
 	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
 
 	collection := client.Database("scc").Collection("user")
-	initialUser := User{
-		Name: "test",
-	}
-	result, err := collection.InsertOne(context.Background(), initialUser)
+	/*result, err := collection.DeleteMany(context.Background(), bson.D{{}})
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Inserted a single document: ", result.InsertedID)
+	fmt.Println("Inserted a single document: ", result)*/
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
